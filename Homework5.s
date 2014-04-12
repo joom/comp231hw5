@@ -36,6 +36,8 @@ main:
 result:					#print the $t0 value to console
 	addi $v0, $a1, 0
 	
+	
+								#resetting sttack
 	lw $s3, 0($sp)				#load third result from stack
 	lw $s2, 4($sp)				#load second result from stack
 	lw $s1, 8($sp)				#load first result from stack
@@ -44,12 +46,8 @@ result:					#print the $t0 value to console
 	lw $a1, 20($sp)				#load first argument from stack
 	lw $ra, 24($sp)				#load the return address
 	
-	addi $sp, $sp 28
-	jr $ra
-	
-	
-	
-					
+	addi $sp, $sp 28			#moving stack pointer back up
+	jr $ra						#return
 
 recursiveSequence: 			#workhorse
 
@@ -119,5 +117,16 @@ recursiveSequence: 			#workhorse
 	jal recursiveSequence		#call function on results of triple recursion
 
 
+								#resetting sttack
+	lw $s3, 0($sp)				#load third result from stack
+	lw $s2, 4($sp)				#load second result from stack
+	lw $s1, 8($sp)				#load first result from stack
+	lw $a3, 12($sp)				#load third argument from stack
+	lw $a2, 16($sp)				#load second argument from stack
+	lw $a1, 20($sp)				#load first argument from stack
+	lw $ra, 24($sp)				#load the return address
+	
+	addi $sp, $sp 28			#moving stack pointer back up
+	jr $ra						#return
 	
 
