@@ -112,7 +112,11 @@ recursiveSequence: 			#workhorse
 								#z-1, x, y
 	jal recursiveSequence
 
+	addi $a1, $s0, 0			#set saved value of first recursive to a1
+	addi $a2, $s1, 0			#set saved value of second recursive to a2
+	addi $a3, $s2, 0			#set saved value of third recursive to a3
 
+	jal recursiveSequence		#call function on results of triple recursion
 
 
 	
