@@ -9,6 +9,22 @@ promptThird: .asciiz "\n Enter the third value: "
 .text
 
 main:
-	li $v0, 4
-	la $a0, promptFirst
+	li $v0, 4		#code for printing out to console in MIPS
+	la $a0, promptFirst	#printing out the "promptFirst"
 	syscall
+	li    $v0, 5 		#loading in value from console
+    syscall
+
+	li $v0, 4		#code for printing out to console in MIPS
+	la $a0, promptSecond	#printing out the "promptSecond"
+	syscall					#loading in value from console
+	li    $v0, 5		
+    syscall
+
+    li $v0, 4			#code for printing out to console in MIPS
+	la $a0, promptThird	#printing out the "promptSThird"
+	syscall
+	li    $v0, 5		#loading in value from console
+    syscall
+
+    
