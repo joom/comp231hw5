@@ -5,7 +5,7 @@
 promptFirst: .asciiz "\n Enter the first value: "
 promptSecond: .asciiz "\n Enter the second value: "
 promptThird: .asciiz "\n Enter the third value: "
-
+enter: .asciiz"\n"
 .text
 
 main:
@@ -85,7 +85,7 @@ recursiveSequence: 			#workhorse
     addi $a1, $a1, -1 			#x-1, call recursive on everything
 
 
-    li $v0, 1
+     li $v0, 1
 	move $a0, $a1
 	syscall
 	 li $v0, 1
@@ -94,8 +94,8 @@ recursiveSequence: 			#workhorse
 	 li $v0, 1
 	move $a0, $a3
 	syscall
-	 li $v0, 1
-	addi $a0, $0, 11111
+	 li $v0, 4
+	la $a0, enter
 	syscall
 	jal recursiveSequence
 
@@ -119,7 +119,7 @@ recursiveSequence: 			#workhorse
 	addi $a3, $t0, 0				#a3 = t2
 								#y-1, z, x
 
-	    li $v0, 1
+	 li $v0, 1
 	move $a0, $a1
 	syscall
 	 li $v0, 1
@@ -128,9 +128,9 @@ recursiveSequence: 			#workhorse
 	 li $v0, 1
 	move $a0, $a3
 	syscall
-	 li $v0, 1
-	addi $a0, $0, 11111
-	syscall	
+	 li $v0, 4
+	la $a0, enter
+	syscall
 	jal recursiveSequence
 
 	add $s2, $v0, $zero 		#saving the value from the first recrursive call
@@ -153,7 +153,7 @@ recursiveSequence: 			#workhorse
 	addi $a1, $t1, 0			#a1 = t1
 	addi $a3, $t0, 0				#a3 = t2
 								#z-1, x, y
-    li $v0, 1
+     li $v0, 1
 	move $a0, $a1
 	syscall
 	 li $v0, 1
@@ -162,16 +162,16 @@ recursiveSequence: 			#workhorse
 	 li $v0, 1
 	move $a0, $a3
 	syscall
-	 li $v0, 1
-	addi $a0, $0, 11111
-	syscall				
+	 li $v0, 4
+	la $a0, enter
+	syscall
 	jal recursiveSequence
 
 	addi $a1, $s0, 0			#set saved value of first recursive to a1
 	addi $a2, $s1, 0			#set saved value of second recursive to a2
 	addi $a3, $s2, 0			#set saved value of third recursive to a3
 
-	    li $v0, 1
+	     li $v0, 1
 	move $a0, $a1
 	syscall
 	 li $v0, 1
@@ -180,8 +180,8 @@ recursiveSequence: 			#workhorse
 	 li $v0, 1
 	move $a0, $a3
 	syscall
-	 li $v0, 1
-	addi $a0, $0, 11111
+	 li $v0, 4
+	la $a0, enter
 	syscall
 	jal recursiveSequence		#call function on results of triple recursion
 
