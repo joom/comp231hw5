@@ -13,30 +13,48 @@ main:
 	la $a0, promptFirst	#printing out the "promptFirst"
 	syscall
 	li    $v0, 5 		#loading in value from console
-	addi $a1, $v0, $zero
-    syscall
+	syscall
+	addi $a1, $v0, 0
+    
 
 	li $v0, 4		#code for printing out to console in MIPS
 	la $a0, promptSecond	#printing out the "promptSecond"
 	syscall					
 	li    $v0, 5		#loading in value from console
-	addi $a2, $v0, $zero		
-    syscall
+	 syscall
+	addi $a2, $v0, 0		
+   
 
     li $v0, 4			#code for printing out to console in MIPS
 	la $a0, promptThird	#printing out the "promptThird"
 	syscall
 	li    $v0, 5		#loading in value from console
-	addi $a3, $v0, $zero		
-    syscall
-
+	syscall
+	addi $a3, $v0, 0		
     
-    jr recursiveSequence
+	
+    blt $a1, $a2, result1	
+    beq $a1, $a2, result1		# if(a1 <= a2) jump to result
 
-result:					#print the $t0 value to console
-	addi $v0, $a1, 0
+
+	jal recursiveSequence
+
 	
+	li $v0, 1
+	move $a0, $v0
+	syscall
+
+result1:
 	
+
+	li $v0, 1
+	move $a0, $a2
+	syscall
+	j quit
+
+result:					#print the $a0 value to console
+	addi $v0, $a2, 0
+
 								#resetting sttack
 	lw $s3, 0($sp)				#load third result from stack
 	lw $s2, 4($sp)				#load second result from stack
@@ -47,6 +65,7 @@ result:					#print the $t0 value to console
 	lw $ra, 24($sp)				#load the return address
 	
 	addi $sp, $sp 28			#moving stack pointer back up
+
 	jr $ra						#return
 
 recursiveSequence: 			#workhorse
@@ -64,6 +83,20 @@ recursiveSequence: 			#workhorse
     beq $a1, $a2, result		# if(a1 <= a2) jump to result
 
     addi $a1, $a1, -1 			#x-1, call recursive on everything
+
+
+    li $v0, 1
+	move $a0, $a1
+	syscall
+	 li $v0, 1
+	move $a0, $a2
+	syscall
+	 li $v0, 1
+	move $a0, $a3
+	syscall
+	 li $v0, 1
+	addi $a0, $0, 11111
+	syscall
 	jal recursiveSequence
 
 	add $s1, $v0, $zero 		#saving the value from the first recrursive call
@@ -76,16 +109,28 @@ recursiveSequence: 			#workhorse
 	addi $t0, $a1, 0			#t0 = a1
 	addi $t1, $a2, 0			#t1 = a2
 	addi $a1, $t1, 0			#a1 = t1
-	addi $a2, t0, 0				#a2 = t2
+	addi $a2, $t0, 0				#a2 = t2
 								#y-1,x,z
 
 									#swap values by 
 	addi $t0, $a3, 0			#t0 = a3
 	addi $t1, $a2, 0			#t1 = a2
 	addi $a1, $t1, 0			#a1 = t1
-	addi $a3, t0, 0				#a3 = t2
+	addi $a3, $t0, 0				#a3 = t2
 								#y-1, z, x
 
+	    li $v0, 1
+	move $a0, $a1
+	syscall
+	 li $v0, 1
+	move $a0, $a2
+	syscall
+	 li $v0, 1
+	move $a0, $a3
+	syscall
+	 li $v0, 1
+	addi $a0, $0, 11111
+	syscall	
 	jal recursiveSequence
 
 	add $s2, $v0, $zero 		#saving the value from the first recrursive call
@@ -97,7 +142,7 @@ recursiveSequence: 			#workhorse
 	addi $t0, $a1, 0			#t0 = a1
 	addi $t1, $a2, 0			#t1 = a2
 	addi $a1, $t1, 0			#a1 = t1
-	addi $a2, t0, 0				#a2 = t2
+	addi $a2, $t0, 0				#a2 = t2
 								#z,y,x
 
 	addi $a1, $a1, -1			#setting z to z-1				
@@ -106,14 +151,38 @@ recursiveSequence: 			#workhorse
 	addi $t0, $a3, 0			#t0 = a3
 	addi $t1, $a2, 0			#t1 = a2
 	addi $a1, $t1, 0			#a1 = t1
-	addi $a3, t0, 0				#a3 = t2
+	addi $a3, $t0, 0				#a3 = t2
 								#z-1, x, y
+    li $v0, 1
+	move $a0, $a1
+	syscall
+	 li $v0, 1
+	move $a0, $a2
+	syscall
+	 li $v0, 1
+	move $a0, $a3
+	syscall
+	 li $v0, 1
+	addi $a0, $0, 11111
+	syscall				
 	jal recursiveSequence
 
 	addi $a1, $s0, 0			#set saved value of first recursive to a1
 	addi $a2, $s1, 0			#set saved value of second recursive to a2
 	addi $a3, $s2, 0			#set saved value of third recursive to a3
 
+	    li $v0, 1
+	move $a0, $a1
+	syscall
+	 li $v0, 1
+	move $a0, $a2
+	syscall
+	 li $v0, 1
+	move $a0, $a3
+	syscall
+	 li $v0, 1
+	addi $a0, $0, 11111
+	syscall
 	jal recursiveSequence		#call function on results of triple recursion
 
 
@@ -130,3 +199,6 @@ recursiveSequence: 			#workhorse
 	jr $ra						#return
 	
 
+quit:
+	li $v0, 10
+	syscall
