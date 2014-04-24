@@ -1,231 +1,119 @@
-# Authors: Cumhur Korkut & Tyler Harden
-# Creation Date: 4/20/14
+# COMP231 Assignment 5
+# Cumhur Korkut & Tyler Harden
 
-.data  #define data to be used in the ".data" section
-promptFirst: .asciiz "\n Enter the first value: "
-promptSecond: .asciiz "\n Enter the second value: "
-promptThird: .asciiz "\n Enter the third value: "
-enter: .asciiz"\n"
-xyz: .asciiz"\n xyz"
-yzx: .asciiz"\n yzx"
-zxy: .asciiz"\n zxy"
+###########
+# Question 3: the result of f(10,8,1) is 10.
+###########
+
+.data  #keeping the strings
+    promptFirst: .asciiz "Enter the first value: "
+    promptSecond: .asciiz "Enter the second value: "
+    promptThird: .asciiz "Enter the third value: "
+    newLine: .asciiz "\n"
+
 .text
 
 main:
-	li $v0, 4		#code for printing out to console in MIPS
-	la $a0, promptFirst	#printing out the "promptFirst"
-	syscall
-	li    $v0, 5 		#loading in value from console
-	syscall
-	addi $a1, $v0, 0
+    addiu   $sp,$sp,-24
+    sw  $ra,20($sp)
+    sw  $fp,16($sp)
+    move    $fp,$sp
+
+# Start Taking Input
+    li $v0, 4       #code for printing out to console in MIPS
+    la $a0, promptFirst #printing out the "promptFirst"
+    syscall
+    li    $v0, 5        #loading in value from console
+    syscall
+    addi $t0, $v0, 0 #save value in t0
     
 
-	li $v0, 4		#code for printing out to console in MIPS
-	la $a0, promptSecond	#printing out the "promptSecond"
-	syscall					
-	li    $v0, 5		#loading in value from console
-	 syscall
-	addi $a2, $v0, 0		
-   
+    li $v0, 4       #code for printing out to console in MIPS
+    la $a0, promptSecond    #printing out the "promptSecond"
+    syscall                 
+    li    $v0, 5        #loading in value from console     
+    syscall
+    addi $t1, $v0, 0   #save value in t1
 
-    li $v0, 4			#code for printing out to console in MIPS
-	la $a0, promptThird	#printing out the "promptThird"
-	syscall
-	li    $v0, 5		#loading in value from console
-	syscall
-	addi $a3, $v0, 0		
-    
-	
-    blt $a1, $a2, result1	
-    beq $a1, $a2, result1		# if(a1 <= a2) jump to result
+    li $v0, 4           #code for printing out to console in MIPS
+    la $a0, promptThird #printing out the "promptThird"
+    syscall
+    li    $v0, 5        #loading in value from console     
+    syscall
+    addi $t2, $v0, 0   #save value in t2
 
+    #move temporary values to argument registers
+    move $a0, $t0
+    move $a1, $t1
+    move $a2, $t2
 
-	jal recursiveSequence
+    jal f
 
-	
-	li $v0, 1
-	move $a0, $v0
-	syscall
-	j quit
+    addi    $a0, $v0, 0  #print the result
+    li    $v0, 1
+    syscall
 
-result1:
-	
+    li $v0, 4           #code for printing out to console in MIPS
+    la $a0, newLine #printing out the "newLine"
+    syscall
+    li $v0, 4           #code for printing out to console in MIPS
+    la $a0, newLine #printing out the "newLine"
+    syscall
 
-	li $v0, 1
-	move $a0, $a2
-	syscall
-	j quit
+    j main #start over
 
-result:					#print the $a2 value to console
-	addi $v0, $a2, 0
+f: #function f
+    addiu   $sp, $sp,-32 #adjustment
+    sw  $ra, 28($sp) #store address in stack
+    sw  $fp, 24($sp) #save fp to stack
+    sw  $s1, 20($sp) #save s1 to stack
+    sw  $s0, 16($sp) #save s0 to stack
+    move    $fp, $sp
+    sw  $a0, 32($fp) #save a0 to fp
+    sw  $a1, 36($fp) #save a1 to fp
+    sw  $a2, 40($fp) #save a2 to fp
+    lw  $v1, 32($fp) #load v1 from fp
+    lw  $v0, 36($fp) #load v0 from fp
 
+    slt $v0, $v0, $v1
+    bne $v0, $0, notEqual #branch if v0 is not zero
+    lw  $v0,36($fp)
+    j   equal           #if v0 is zero, jump to "equal"
 
-	addi $v0, $a2, 0
+notEqual:
+    lw  $v0,32($fp)
 
-								#resetting sttack
-	lw $s3, 0($sp)				#load third result from stack
-	lw $s2, 4($sp)				#load second result from stack
-	lw $s1, 8($sp)				#load first result from stack
-	lw $a3, 12($sp)				#load third argument from stack
-	lw $a2, 16($sp)				#load second argument from stack
-	lw $a1, 20($sp)				#load first argument from stack
-	lw $ra, 24($sp)				#load the return address
-	
-	addi $sp, $sp 28			#moving stack pointer back up
+    addiu   $v0, $v0, -1 #adjustment
+    move    $a0, $v0
+    lw  $a1, 36($fp) #load a1 from fp
+    lw  $a2, 40($fp) #load a2 from fp
+    jal f           #jump to function f
+    move    $s1, $v0
+    lw  $v0, 36($fp) #load v0 from fp
 
+    addiu   $v0,$v0,-1 #adjustment
+    move    $a0,$v0
+    lw  $a1,40($fp) #load a1 from fp
+    lw  $a2,32($fp) #load a2 from fp
+    jal f           #jump to function f
+    move    $s0,$v0
+    lw  $v0,40($fp) #load v0 from fp
 
+    addiu   $v0,$v0,-1 #adjustment
+    move    $a0,$v0
+    lw  $a1,32($fp) #load a1 from fp
+    lw  $a2,36($fp) #load a2 from fp
+    jal f           #jump to function f
+    move    $a0,$s1 #move from s1 to a0
+    move    $a1,$s0 #move from s0 to a1
+    move    $a2,$v0 #move from v0 to a2
+    jal f           #jump to function f
 
-	jr $ra						#return
-
-recursiveSequence: 			#workhorse
-
-
-
-	addi $sp, $sp, -28			#move the stack down 28
-	sw $ra, 24($sp)				#save the return address
-	sw $a1, 20($sp)				#save first argument to stack
-	sw $a2, 16($sp)				#save second argument to stack
-	sw $a3, 12($sp)				#save third argument to stack
-	sw $s1, 8($sp)				#save first result to stack
-	sw $s2, 4($sp)				#save second result to stack
-	sw $s3, 0($sp)				#save third result to stack
-	
-	blt $a1, $a2, result	
-    beq $a1, $a2, result		# if(a1 <= a2) jump to result
-
-	
-    addi $a1, $a1, -1 			#x-1, call recursive on everything
-
-
-     li $v0, 1
-	move $a0, $a1
-	syscall
-	 li $v0, 1
-	move $a0, $a2
-	syscall
-	 li $v0, 1
-	move $a0, $a3
-	syscall
-
-	li $v0, 4
-	la $a0, enter
-	syscall 
-	jal recursiveSequence
-
-	add $s1, $v0, $zero 		#saving the value from the first recrursive call
-	 li $v0, 1
-	move $a0, $s1
-
-	addi $a1, $a1, 1 			#restore first value
-
-	addi $a2, $a2, -1 			#y-1
-
-								#swap values by 
-	addi $t0, $a2, 0			#t0 = a1
-	addi $t1, $a1, 0			#t1 = a2
-	addi $a1, $t0, 0			#a1 = t1
-	addi $a2, $t1, 0			#a2 = t2
-								#y-1,x,z
-
-									#swap values by 
-	addi $t0, $a3, 0			#t0 = a3
-	addi $t1, $a2, 0			#t1 = a2
-	addi $a3, $t1, 0			#a1 = t1
-	addi $a2, $t0, 0			#a3 = t2
-								#y-1, z, x
-
-	 li $v0, 1
-	move $a0, $a1
-	syscall
-	 li $v0, 1
-	move $a0, $a2
-	syscall
-	 li $v0, 1
-	move $a0, $a3
-	syscall
-
-
-	li $v0, 4
-	la $a0, enter
-	syscall 
-
-	jal recursiveSequence
-
-	add $s2, $v0, $zero 		#saving the value from the first recrursive call
-	 li $v0, 1
-	move $a0, $s2
-
-	addi $a1, $a1, 1 			#restore first value
-
-									#swap values by 
-	addi $t0, $a3, 0			#t0 = a3
-	addi $t1, $a2, 0			#t1 = a2
-	addi $a3, $t1, 0			#a1 = t1
-	addi $a2, $t0, 0			#a3 = t2
-								#y, z, x
-
-								#swap values by 
-	addi $t0, $a2, 0			#t0 = a1
-	addi $t1, $a1, 0			#t1 = a2
-	addi $a1, $t0, 0			#a1 = t1
-	addi $a2, $t1, 0			#a2 = t2
-								#z, y, x
-
-	addi $a1, $a1, -1 			#subtract one from first value
-
-     li $v0, 1
-	move $a0, $a1
-	syscall
-	 li $v0, 1
-	move $a0, $a2
-	syscall
-	 li $v0, 1
-	move $a0, $a3
-	syscall
-	 li $v0, 4
-	la $a0, enter
-	syscall
-
-
-	jal recursiveSequence
-	add $s3, $v0, $zero 
-	 li $v0, 1
-	move $a0, $s3
-
-	addi $a1, $s0, 0			#set saved value of first recursive to a1
-	addi $a2, $s1, 0			#set saved value of second recursive to a2
-	addi $a3, $s2, 0			#set saved value of third recursive to a3
-
-	 li $v0, 1
-	move $a0, $a1
-	syscall
-	 li $v0, 1
-	move $a0, $a2
-	syscall
-	 li $v0, 1
-	move $a0, $a3
-	syscall
-	
-	
-	 li $v0, 4
-	la $a0, enter
-	syscall 
-	jal recursiveSequence		#call function on results of triple recursion
-
-
-								#resetting stack
-	lw $s3, 0($sp)				#load third result from stack
-	lw $s2, 4($sp)				#load second result from stack
-	lw $s1, 8($sp)				#load first result from stack
-	lw $a3, 12($sp)				#load third argument from stack
-	lw $a2, 16($sp)				#load second argument from stack
-	lw $a1, 20($sp)				#load first argument from stack
-	lw $ra, 24($sp)				#load the return address
-	
-	addi $sp, $sp 28			#moving stack pointer back up
-	jr $ra						#return
-	
-
-quit:
-	li $v0, 10
-	syscall
+equal:
+    move    $sp,$fp
+    lw  $ra,28($sp) #load address from stack
+    lw  $fp,24($sp) #load fp from stack pointer
+    lw  $s1,20($sp) #load s1 from stack pointer
+    lw  $s0,16($sp) #load s0 from stack pointer
+    addiu   $sp,$sp,32
+    j   $ra         #jump back to registered address
